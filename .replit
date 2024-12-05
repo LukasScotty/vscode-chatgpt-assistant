@@ -1,0 +1,51 @@
+modules = ["nodejs-20"]
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "VS Code Extension"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "VS Code Extension Build"
+
+[[workflows.workflow]]
+name = "VS Code Extension"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc && node ./out/extension.js"
+
+[[workflows.workflow]]
+name = "VS Code Extension Build"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "npx tsc --watch"
+
+[deployment]
+run = ["sh", "-c", "npx tsc && node ./out/extension.js"]
